@@ -43,7 +43,8 @@ class MXC6655
 
   private:
     const int ADR = 0x15;
-    float offset[3] = {0, 0, 0.6564454}; //Manual offset for the Z axis - took average of 10 samples after manual leveling
+    // float offset[3] = {0, 0, 0.6564454}; //Manual offset for the Z axis - took average of 10 samples after manual leveling
+    float offset[3] = {0, 0, 0}; //Null
 };
 
 #endif
