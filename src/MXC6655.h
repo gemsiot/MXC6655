@@ -40,6 +40,7 @@ class MXC6655
     int begin(void);
     float getAccel(uint8_t axis, uint8_t range = TWO_G);
     int updateAccelAll();
+    float getTemp();
 
   private:
     const int ADR = 0x15;

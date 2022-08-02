@@ -44,6 +44,17 @@ float MXC6655::getAccel(uint8_t axis, uint8_t range)
     if(error == 0) return (float(val/2048.0))*2 + offset[axis]; //Divide by 12 bit resolution, multiply by FSR, add offset //FIX! allow for multiple gain ranges
     else return 0; 
 }
+float MXC6655::getTemp()
+{
+    Wire.beginTransmission(ADR);
+    Wire.write(REG_TOUT); //Point to first reg
+    int error = Wire.endTransmission(); //Grab error from first write
+    if(error == 0) {
+        Wire.requestFrom(ADR, 1);
+        return (float(Wire.read())*0.586) + 25.0;
+    }
+    else return 0; //If error in read, return error state
+}
 
 int MXC6655::updateAccelAll()
 {
