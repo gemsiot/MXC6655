@@ -41,11 +41,12 @@ class MXC6655
     float getAccel(uint8_t axis, uint8_t range = TWO_G);
     int updateAccelAll();
     float getTemp();
+    float offset[3] = {0, 0, 0}; //Null
 
   private:
     const int ADR = 0x15;
     // float offset[3] = {0, 0, 0.6564454}; //Manual offset for the Z axis - took average of 10 samples after manual leveling
-    float offset[3] = {0, 0, 0}; //Null
+    
 };
 
 #endif
