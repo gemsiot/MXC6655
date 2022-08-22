@@ -51,7 +51,8 @@ float MXC6655::getTemp()
     int error = Wire.endTransmission(); //Grab error from first write
     if(error == 0) {
         Wire.requestFrom(ADR, 1);
-        return (float(Wire.read())*0.586) + 25.0;
+        int8_t val = Wire.read();
+        return (float(val)*0.586) + 25.0; //Cast to int first to ensure signed-ness is observed 
     }
     else return 0; //If error in read, return error state
 }
