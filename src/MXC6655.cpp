@@ -27,7 +27,21 @@ int MXC6655::begin()
     Wire.beginTransmission(ADR);
 	Wire.write(0x0D); //Write to control register
 	Wire.write(0x00); //Make sure register is cleared - Self test off, FSR = 2g, Power down false
-	return Wire.endTransmission(); //Write back I2C status
+	int error = Wire.endTransmission(); //Write back I2C status
+    if(error == 0) {
+        unsigned long localTime = millis();
+        uint8_t val = 0;
+        while((millis() - localTime) < 400) { //Max startup time is 400ms
+            Wire.beginTransmission(ADR); //Wait for new data
+            Wire.write(0x01);
+            Wire.endTransmission();
+
+            Wire.requestFrom(ADR, 1);
+            val = Wire.read();
+            if((val & 0x01) == 0x01) break; //Break out of loop once data ready bit set
+        }
+    }
+    return error; //return error state either way
 }
 
 float MXC6655::getAccel(uint8_t axis, uint8_t range)
@@ -65,6 +79,8 @@ int MXC6655::updateAccelAll()
     int error = Wire.endTransmission(); //Grab error from first write
 
     Wire.requestFrom(ADR, 6); //Get all bytes at once
+    unsigned long localTime = millis();
+    while(Wire.available() < 6 && (millis() - localTime) < 10); //Wait at most 10 ms for new data
     for(int i = 0; i < 3; i++) {
 		dataRaw[i] = (Wire.read() << 8); //Read in high byte 
 		dataRaw[i] = dataRaw[i] | Wire.read(); //Read in low byte 
