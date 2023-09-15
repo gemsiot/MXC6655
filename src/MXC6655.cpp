@@ -25,22 +25,31 @@ int MXC6655::begin()
         if(!Wire.isEnabled()) Wire.begin(); //Only initialize I2C if not done already //INCLUDE FOR USE WITH PARTICLE 
     #endif
     Wire.beginTransmission(ADR);
-	Wire.write(0x0D); //Write to control register
-	Wire.write(0x00); //Make sure register is cleared - Self test off, FSR = 2g, Power down false
-	int error = Wire.endTransmission(); //Write back I2C status
-    if(error == 0) {
-        unsigned long localTime = millis();
-        uint8_t val = 0;
-        while((millis() - localTime) < 400) { //Max startup time is 400ms
-            Wire.beginTransmission(ADR); //Wait for new data
-            Wire.write(0x01);
-            Wire.endTransmission();
+    Wire.write(0x0F);
+    Wire.endTransmission();
+    int val = Wire.read();
+    int error = 0;
+    if(val == 0x05) { //If ID register reads correctlty, proceed with init
+        Wire.beginTransmission(ADR);
+        Wire.write(0x0D); //Write to control register
+        Wire.write(0x00); //Make sure register is cleared - Self test off, FSR = 2g, Power down false
+        error = Wire.endTransmission(); //Write back I2C status
+        if(error == 0) {
+            unsigned long localTime = millis();
+            uint8_t val = 0;
+            while((millis() - localTime) < 400) { //Max startup time is 400ms
+                Wire.beginTransmission(ADR); //Wait for new data
+                Wire.write(0x01);
+                Wire.endTransmission();
 
-            Wire.requestFrom(ADR, 1);
-            val = Wire.read();
-            if((val & 0x01) == 0x01) break; //Break out of loop once data ready bit set
+                Wire.requestFrom(ADR, 1);
+                val = Wire.read();
+                if((val & 0x01) == 0x01) break; //Break out of loop once data ready bit set
+            }
         }
     }
+    else error = -1; //Otherwise return -1 error
+    
     return error; //return error state either way
 }
 
