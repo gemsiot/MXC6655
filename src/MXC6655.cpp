@@ -27,8 +27,11 @@ int MXC6655::begin()
     Wire.beginTransmission(ADR);
     Wire.write(0x0F);
     Wire.endTransmission();
+    Wire.requestFrom(ADR, 1);
     int val = Wire.read();
     int error = 0;
+    // Serial.print("Accel ID Reg: 0x");
+    // Serial.println(val, HEX); //DEBUG!
     if(val == 0x05) { //If ID register reads correctlty, proceed with init
         Wire.beginTransmission(ADR);
         Wire.write(0x0D); //Write to control register
