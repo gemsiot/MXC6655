@@ -7,6 +7,8 @@ Bobby Schulz @ GEMS Sensing
 MXC6655 is a low cost MEMS accelerometer 
 
 Distributed as-is; no warranty is given.
+
+© 2023 Regents of the University of Minnesota. All rights reserved.
 ******************************************************************************/
 
 #include <MXC6655.h>
